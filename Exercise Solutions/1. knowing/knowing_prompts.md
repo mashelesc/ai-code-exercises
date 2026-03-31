@@ -5,29 +5,12 @@
 - The codespace contains 4 python scripts that can be used to manager tasks, each script has it's specific task, enabling code reuse.
 - The **app.py** script contains a single class that handles the whole life cycle of a task.
 - The **cli.py** script is used to interact with the project via the command line interface.
-- The **models.py** script contains the task mananger model.
+- The **models.py** script contains the task manager model.
 - The **storage.py** script stores the tasks that have been created.
-- The test folder has a **test_task_mananger.py** script that checks whether the project works. 
+- The test folder has a **test_task_manager.py** script that checks whether the project works. 
 - This project uses python and a few of it's built-in libraries.
   
 ## PROMPT 1: Understanding Project Structure and Technology Stack
-Optimizing tool selection...I'll explore the project structure and identify the technology stack by reading the key files.     
-
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/app.py#1-1), lines 1 to 50
-
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/cli.py#1-1), lines 1 to 50
-
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/models.py)
-
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/storage.py#1-1), lines 1 to 50
-
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/knowing_prompts.md)
-
-Let me check for any additional configuration files or test files:  
-
-Ran terminal command:  find /home/sc/Documents/ai-code-exercises/use-cases/task-manager/python -type f -name "*.py" | head -20
-
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python)
 
 ## Project Structure & Technology Stack
 
@@ -92,19 +75,11 @@ task-manager/python/
 ✓ **Timestamp Tracking**: created_at, updated_at, completed_at, due_date.  
 ✓ **CLI-First**: Command-line interface with structured subcommands.
 
-                        --------------
-
-
 ## Initial Thoughts Before Prompt 2
 - To export a task into a csv file, a function **save_as_csv** could be     created inside the **storage.py** script, inside the **TaskStorage** class.
 - Alternatively, the **save** function that is inside the **TaskStorage** class can be modified into asking the user their preferred format to save the tasks in.
   
 ## PROMPT 2: Finding Feature Implementation Locations
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/app.py)
-
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/storage.py)
-
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/cli.py)
 
 Based on my analysis of the project structure, here's where task data export functionality should belong:
 
@@ -195,10 +170,7 @@ File output
 
 The **app.py** layer is the **most suitable** for the main export logic since it orchestrates all business operations, while **storage.py** handles the serialization/format conversion that already exists.
 
-            ------------
-
 ## PROMPT 3: Understanding Domain Models and Business Concepts
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/models.py)
 
 Searched for regex `TaskPriority|TaskStatus|class Task` (`**/*.py`), 20 results
 
@@ -375,11 +347,7 @@ Task object          → Flattened dict with above conversions
 | Each task has unique UUID | Immutable identifier for referencing |
 | Timestamps auto-manage | created_at (immutable), updated_at (auto), completed_at (conditional) |
 
-            ---------
-
 ## PART 4: Practical Application
-
-I'll analyze this new business rule and create a comprehensive implementation plan.
 
 ## **Understanding the New Rule**
 
@@ -699,15 +667,11 @@ elif args.command == "stats":
 
 ## REFLECTION
 
-I'll create a comprehensive reflection on the entire task manager project based on everything we've explored. 
-
-Read [](file:///home/sc/Documents/ai-code-exercises/use-cases/task-manager/python/knowing_prompts.md#1-1), lines 1 to 50
-
-## **Project Reflection: Task Manager Complete Overview**
+### **Project Reflection: Task Manager Complete Overview**
 
 ---
 
-## **1. Project At a Glance**
+### **1. Project At a Glance**
 
 **Purpose:** A command-line task management system with persistent JSON storage
 
@@ -733,9 +697,9 @@ Data Storage (tasks.json) — Filesystem
 
 ---
 
-## **2. Architecture & Design Patterns**
+### **2. Architecture & Design Patterns**
 
-### **Strengths Observed**
+#### **Strengths Observed**
 
 ✅ **Modular Design**
 - Each file has a single, well-defined responsibility
@@ -756,7 +720,7 @@ Data Storage (tasks.json) — Filesystem
 - created_at (immutable), updated_at (auto), completed_at (conditional)
 - Excellent for auditing and analytics
 
-### **Design Considerations**
+#### **Design Considerations**
 
 ⚠️ **Data Access Pattern**
 - TaskStorage maintains in-memory dictionary of tasks
@@ -775,9 +739,9 @@ Data Storage (tasks.json) — Filesystem
 
 ---
 
-## **3. Domain Model Analysis**
+### **3. Domain Model Analysis**
 
-### **Core Entity: Task**
+#### **Core Entity: Task**
 
 The Task is the heart of the system with rich state management:
 
@@ -789,7 +753,7 @@ The Task is the heart of the system with rich state management:
 | **Temporal** | created_at, updated_at, due_date, completed_at | ✅ Excellent |
 | **Metadata** | description, owner (N/A), project (N/A) | ⚠️ Minimal |
 
-### **Business Rules Currently Implemented**
+#### **Business Rules Currently Implemented**
 
 1. ✅ Tasks start in TODO status
 2. ✅ Priority defaults to MEDIUM
@@ -798,7 +762,7 @@ The Task is the heart of the system with rich state management:
 5. ✅ Timestamps auto-manage
 6. ✅ Enums enforce valid states
 
-### **Critical Gap: No Abandoned State**
+#### **Critical Gap: No Abandoned State**
 
 Before our new rule, there was no way to differentiate between:
 - **Actually 7+ days overdue** (forgotten)
@@ -806,9 +770,9 @@ Before our new rule, there was no way to differentiate between:
 
 ---
 
-## **4. Current Feature Set**
+### **4. Current Feature Set**
 
-### **Task Operations**
+#### **Task Operations**
 
 | Operation | Implemented | Location |
 |-----------|---|---|
@@ -820,7 +784,7 @@ Before our new rule, there was no way to differentiate between:
 | **Delete** | ✅ Yes | app.py, cli.py |
 | **Soft Delete/Archive** | ❌ No | — |
 
-### **Query & Filtering**
+#### **Query & Filtering**
 
 | Feature | Implemented | Location |
 |---------|---|---|
@@ -832,7 +796,7 @@ Before our new rule, there was no way to differentiate between:
 | Filter by date range | ❌ No | — |
 | Search by title/description | ❌ No | — |
 
-### **Analytics & Reporting**
+#### **Analytics & Reporting**
 
 | Metric | Implemented | Location |
 |--------|---|---|
@@ -843,7 +807,7 @@ Before our new rule, there was no way to differentiate between:
 | Completed in last 7 days | ✅ Yes | app.py |
 | **Abandoned count** | 🆕 NEW | Our PR |
 
-### **Tag Management**
+#### **Tag Management**
 
 | Operation | Status |
 |-----------|--------|
@@ -855,14 +819,13 @@ Before our new rule, there was no way to differentiate between:
 
 ---
 
-## **5. New Business Rule: Abandonment Logic**
-
-### **The Rule**
+### **5. New Business Rule: Abandonment Logic**
+#### **The Rule**
 ```
 IF overdue > 7 days AND priority ≠ HIGH/URGENT THEN mark ABANDONED
 ```
 
-### **Why This Matters**
+#### **Why This Matters**
 
 **Problem it solves:**
 - Users forget about low-priority overdue tasks
@@ -875,14 +838,14 @@ IF overdue > 7 days AND priority ≠ HIGH/URGENT THEN mark ABANDONED
 - Requires orchestration across multiple layers
 - Adds 3 methods to TaskManager
 
-### **Implementation Requirements**
+#### **Implementation Requirements**
 
 Files affected: **4** (models.py, app.py, storage.py, cli.py)  
 New status: **1** (ABANDONED)  
 New methods: **4** (mark_abandoned_tasks, _should_abandon, days_overdue, get_abandoned_tasks)  
 Backward compatibility: **✅ Maintained** (additive only)
 
-### **Key Questions Raised**
+#### **Key Questions Raised**
 
 ❓ When should check run? (on-demand vs automatic vs scheduled)  
 ❓ When created, can HIGH/URGENT be unabandoned? (reversal policy)  
@@ -892,9 +855,9 @@ Backward compatibility: **✅ Maintained** (additive only)
 
 ---
 
-## **6. Key Insights & Learning Points**
+### **6. Key Insights & Learning Points**
 
-### **Code Quality Observations**
+#### **Code Quality Observations**
 
 | Aspect | Quality | Evidence |
 |--------|---------|----------|
@@ -905,7 +868,7 @@ Backward compatibility: **✅ Maintained** (additive only)
 | Documentation | Fair | Lacks docstrings in several methods |
 | Testing | Unknown | No test file analyzed yet |
 
-### **Architecture Insights**
+#### **Architecture Insights**
 
 1. **Layering works well** — Each layer has minimal dependencies on others
 2. **Enums are powerful** — Prevent entire classes of bugs
@@ -913,7 +876,7 @@ Backward compatibility: **✅ Maintained** (additive only)
 4. **TDD-friendly** — Each component can be tested independently
 5. **Extensibility paths clear** — New statuses, filters, and operations are straightforward to add
 
-### **Business Logic Patterns**
+#### **Business Logic Patterns**
 
 The codebase demonstrates:
 - ✅ State machines (Task workflow)
@@ -925,9 +888,8 @@ The codebase demonstrates:
 
 ---
 
-## **7. Growth & Extensibility**
-
-### **Low-Hanging Fruit (Easy Additions)**
+### **7. Growth & Extensibility**
+#### **Low-Hanging Fruit (Easy Additions)**
 
 1. **Tag-based filtering** — Add `get_tasks_by_tag()` storage method
 2. **Date range queries** — Add `get_tasks_in_date_range(start, end)`
@@ -935,7 +897,7 @@ The codebase demonstrates:
 4. **Export formats** — CSV, JSON, Markdown exports
 5. **Batch operations** — Mark multiple tasks at once
 
-### **Medium Complexity**
+#### **Medium Complexity**
 
 6. **Task dependencies** — Link tasks (blocked by, blocks, related_to)
 7. **Recurring tasks** — Daily, weekly, bi-weekly patterns
@@ -943,7 +905,7 @@ The codebase demonstrates:
 9. **Collaborative features** — Assigned to, reviewed by fields
 10. **Time tracking** — Estimated vs actual duration
 
-### **Advanced Features**
+#### **Advanced Features**
 
 11. **Database backend** — SQLite or PostgreSQL migration
 12. **API server** — REST or GraphQL interface
@@ -953,9 +915,9 @@ The codebase demonstrates:
 
 ---
 
-## **8. Potential Refactoring Opportunities**
+### **8. Potential Refactoring Opportunities**
 
-### **If Project Grows**
+#### **If Project Grows**
 
 **Extract QueryBuilder pattern**
 ```python
@@ -988,9 +950,8 @@ class TaskRepository:
 
 ---
 
-## **9. Technical Debt & Risk Areas**
-
-### **Current Limitations**
+### **9. Technical Debt & Risk Areas**
+#### **Current Limitations**
 
 | Issue | Impact | Mitigation |
 |-------|--------|-----------|
@@ -1000,7 +961,7 @@ class TaskRepository:
 | No concurrent update handling | Lost updates possible | Optimistic locking |
 | Single file storage | No backup/recovery | Versioning + snapshots |
 
-### **Assumptions Made**
+#### **Assumptions Made**
 
 1. ✅ Single-user local environment
 2. ✅ Small dataset (< 10k tasks)
@@ -1010,9 +971,8 @@ class TaskRepository:
 
 ---
 
-## **10. Reflection Summary**
-
-### **What This Project Does Well**
+### **10. Reflection Summary**
+#### **What This Project Does Well**
 
 🎯 **Educational Value**
 - Excellent teaching example of layered architecture
@@ -1029,7 +989,7 @@ class TaskRepository:
 - Not overengineered for what it does
 - Easy to understand and modify
 
-### **The Next Challenge**
+#### **The Next Challenge**
 
 The abandonment rule exposes an interesting question: **At what point does business logic automation become necessary?**
 
@@ -1038,7 +998,7 @@ With an `abandon` command, users run it manually. But with a scheduled task, it 
 - Event systems (pub/sub, webhooks)
 - Workflow orchestration (Airflow, temporal)
 
-### **The Bigger Picture**
+#### **The Bigger Picture**
 
 This project represents the **"sweet spot"** state for a learning tool:
 - ✅ Complex enough to be realistic
@@ -1050,7 +1010,7 @@ The true test will be: **Can we add the abandonment feature without breaking exi
 
 ---
 
-## **11. Next Steps & Questions**
+### **11. Next Steps & Questions**
 
 **For Implementation:**
 1. Should we implement the abandonment feature end-to-end?
@@ -1066,8 +1026,6 @@ The true test will be: **Can we add the abandonment feature without breaking exi
 1. Would you like to see the test suite (if it exists)?
 2. Should we profile performance with large datasets?
 3. Would dependency analysis be helpful?
-
-            ---------
 
 ## FINAL DISCUSSION & REFLECTION
 
