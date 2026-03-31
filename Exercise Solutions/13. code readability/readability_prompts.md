@@ -1,4 +1,4 @@
-## AI TOOL USED:
+## AI TOOL USED: CLAUDE AI
 ## EXERCISE: CODE READABILITY
 
 ## PROMPT 1: Comment and Documentation Addition
