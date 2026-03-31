@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conditional Logic Simplifications</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f4f0;
+    --bg-tertiary: #eeede8;
+    --text-primary: #1a1a18;
+    --text-secondary: #4a4a47;
+    --text-tertiary: #888780;
+    --border: rgba(0,0,0,0.1);
+    --border-light: rgba(0,0,0,0.06);
+    --danger-bg: #fcebeb;
+    --danger-text: #a32d2d;
+    --success-bg: #eaf3de;
+    --success-text: #3b6d11;
+    --info-bg: #e6f1fb;
+    --info-text: #185fa5;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font-sans: system-ui, -apple-system, sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1e1e1c;
+      --bg-secondary: #272725;
+      --bg-tertiary: #2e2e2b;
+      --text-primary: #e8e6df;
+      --text-secondary: #a8a69f;
+      --text-tertiary: #6a6864;
+      --border: rgba(255,255,255,0.1);
+      --border-light: rgba(255,255,255,0.06);
+      --danger-bg: #3a1a1a;
+      --danger-text: #f09595;
+      --success-bg: #1a2e10;
+      --success-text: #97c459;
+      --info-bg: #0e2038;
+      --info-text: #85b7eb;
+    }
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    padding: 32px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    margin-bottom: 24px;
+  }
+
+  .card-full {
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .section-header {
+    padding: 10px 14px 9px;
+    border-bottom: 0.5px solid var(--border-light);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .fn-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 400;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .tag-why {
+    background: var(--info-bg);
+    color: var(--info-text);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .col {
+    border-right: 0.5px solid var(--border-light);
+  }
+
+  .col:last-child {
+    border-right: none;
+  }
+
+  .col-label {
+    padding: 6px 14px 4px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    background: var(--bg-tertiary);
+    border-bottom: 0.5px solid var(--border-light);
+  }
+
+  .code-block {
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.7;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--text-secondary);
+  }
+
+  .kw  { color: var(--info-text); }
+  .st  { color: var(--success-text); }
+  .cm  { color: var(--text-tertiary); }
+
+  .why-block {
+    padding: 9px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    border-top: 0.5px solid var(--border-light);
+    background: var(--bg-primary);
+  }
+
+  .why-block code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--bg-tertiary);
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: var(--text-primary);
+  }
+</style>
+</head>
+<body>
+
+<h1>Conditional logic simplifications</h1>
+<p class="subtitle">Five patterns applied to <code style="font-family:monospace;font-size:12px">sales_report.py</code> — before and after, with rationale.</p>
+
+<div class="card-full">
+  <div class="section-header">
+    <span class="fn-name">validate_report_params</span>
+    <span class="tag tag-why">set membership</span>
+  </div>
+  <div class="grid">
+    <div class="col">
+      <div class="col-label">before</div>
+      <div class="code-block"><span class="kw">if</span> report_type <span class="kw">not in</span> [<span class="st">'summary'</span>, <span class="st">'detailed'</span>, <span class="st">'forecast'</span>]:
+    <span class="kw">raise</span> ValueError(...)
+<span class="kw">if</span> output_format <span class="kw">not in</span> [<span class="st">'pdf'</span>, <span class="st">'excel'</span>, <span class="st">'html'</span>, <span class="st">'json'</span>]:
+    <span class="kw">raise</span> ValueError(...)</div>
+    </div>
+    <div class="col">
+      <div class="col-label">after</div>
+      <div class="code-block">VALID_REPORT_TYPES   = {<span class="st">"summary"</span>, <span class="st">"detailed"</span>, <span class="st">"forecast"</span>}
+VALID_OUTPUT_FORMATS = {<span class="st">"pdf"</span>, <span class="st">"excel"</span>, <span class="st">"html"</span>, <span class="st">"json"</span>}
+
+<span class="kw">if</span> report_type <span class="kw">not in</span> VALID_REPORT_TYPES:
+    <span class="kw">raise</span> ValueError(...)
+<span class="kw">if</span> output_format <span class="kw">not in</span> VALID_OUTPUT_FORMATS:
+    <span class="kw">raise</span> ValueError(...)</div>
+    </div>
+  </div>
+  <div class="why-block">Valid values are defined once as module-level sets and reused in both validation and the dispatch table. Set membership is O(1) vs O(n) for list lookup, and adding a new format means editing one line in one place.</div>
+</div>
+
+<div class="card-full">
+  <div class="section-header">
+    <span class="fn-name">filter_sales_data</span>
+    <span class="tag tag-why">unified branch</span>
+  </div>
+  <div class="grid">
+    <div class="col">
+      <div class="col-label">before</div>
+      <div class="code-block"><span class="kw">if</span> isinstance(value, list):
+    sales_data = [s <span class="kw">for</span> s <span class="kw">in</span> sales_data
+                  <span class="kw">if</span> s.get(key) <span class="kw">in</span> value]
+<span class="kw">else</span>:
+    sales_data = [s <span class="kw">for</span> s <span class="kw">in</span> sales_data
+                  <span class="kw">if</span> s.get(key) == value]</div>
+    </div>
+    <div class="col">
+      <div class="col-label">after</div>
+      <div class="code-block">allowed = (set(value)
+           <span class="kw">if</span> isinstance(value, list)
+           <span class="kw">else</span> {value})
+result = [s <span class="kw">for</span> s <span class="kw">in</span> result
+          <span class="kw">if</span> s.get(key) <span class="kw">in</span> allowed]</div>
+    </div>
+  </div>
+  <div class="why-block">Wrapping a scalar in a set unifies both branches into one comprehension. The <code>if/else</code> now only decides <em>how to build</em> the allowed set — the filter itself is written once.</div>
+</div>
+
+<div class="card-full">
+  <div class="section-header">
+    <span class="fn-name">_compute_forecast</span>
+    <span class="tag tag-why">list comprehension + divmod</span>
+  </div>
+  <div class="grid">
+    <div class="col">
+      <div class="col-label">before</div>
+      <div class="code-block">growth_rates = []
+<span class="kw">for</span> i <span class="kw">in</span> range(1, len(sorted_months)):
+    prev = monthly_sales[sorted_months[i-1]]
+    curr = monthly_sales[sorted_months[i]]
+    <span class="kw">if</span> prev > 0:
+        growth_rates.append(
+            ((curr - prev) / prev) * 100)
+<span class="cm"># month rollover</span>
+<span class="kw">for</span> i <span class="kw">in</span> range(1, 4):
+    month += 1
+    <span class="kw">if</span> month > 12:
+        month = 1
+        year += 1</div>
+    </div>
+    <div class="col">
+      <div class="col-label">after</div>
+      <div class="code-block">growth_rates = [
+    ((monthly_sales[sorted_months[i]]
+      - monthly_sales[sorted_months[i-1]])
+     / monthly_sales[sorted_months[i-1]]) * 100
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, len(sorted_months))
+    <span class="kw">if</span> monthly_sales[sorted_months[i-1]] > 0
+]
+<span class="cm"># month rollover via divmod</span>
+month_total, month = divmod(month, 12)
+month = month <span class="kw">or</span> 12
+year += month_total <span class="kw">if</span> month != 12 <span class="kw">else</span> 0</div>
+    </div>
+  </div>
+  <div class="why-block">The accumulator loop becomes a filtered list comprehension — the guard (<code>if prev &gt; 0</code>) moves inline. Month rollover uses <code>divmod</code> to eliminate the manual <code>if month &gt; 12</code> branch entirely.</div>
+</div>
+
+<div class="card-full">
+  <div class="section-header">
+    <span class="fn-name">build_report_data</span>
+    <span class="tag tag-why">dict.update pattern</span>
+  </div>
+  <div class="grid">
+    <div class="col">
+      <div class="col-label">before</div>
+      <div class="code-block"><span class="kw">if</span> grouping:
+    report_data[<span class="st">'grouping'</span>] = {...}
+<span class="kw">if</span> report_type == <span class="st">'detailed'</span>:
+    report_data[<span class="st">'transactions'</span>] = [...]
+<span class="kw">if</span> report_type == <span class="st">'forecast'</span>:
+    report_data[<span class="st">'forecast'</span>] = {...}</div>
+    </div>
+    <div class="col">
+      <div class="col-label">after</div>
+      <div class="code-block">optional = [
+    {<span class="st">"grouping"</span>: {...}} <span class="kw">if</span> grouping <span class="kw">else</span> {},
+    {<span class="st">"transactions"</span>: [...]}
+        <span class="kw">if</span> report_type == <span class="st">"detailed"</span> <span class="kw">else</span> {},
+    {<span class="st">"forecast"</span>: {...}}
+        <span class="kw">if</span> report_type == <span class="st">"forecast"</span> <span class="kw">else</span> {},
+]
+<span class="kw">for</span> section <span class="kw">in</span> optional:
+    report.update(section)</div>
+    </div>
+  </div>
+  <div class="why-block">Optional keys are expressed declaratively as a list of dicts — empty dicts for absent sections, populated dicts otherwise. A single <code>for/update</code> loop merges them. Adding a new optional section is one list entry, not a new <code>if</code> block reaching into the report dict.</div>
+</div>
+
+<div class="card-full">
+  <div class="section-header">
+    <span class="fn-name">render_report</span>
+    <span class="tag tag-why">dispatch table</span>
+  </div>
+  <div class="grid">
+    <div class="col">
+      <div class="col-label">before</div>
+      <div class="code-block"><span class="kw">if</span> output_format == <span class="st">'json'</span>:
+    <span class="kw">return</span> report_data
+<span class="kw">elif</span> output_format == <span class="st">'html'</span>:
+    <span class="kw">return</span> _generate_html_report(
+        report_data, include_charts)
+<span class="kw">elif</span> output_format == <span class="st">'excel'</span>:
+    <span class="kw">return</span> _generate_excel_report(
+        report_data, include_charts)
+<span class="kw">elif</span> output_format == <span class="st">'pdf'</span>:
+    <span class="kw">return</span> _generate_pdf_report(
+        report_data, include_charts)</div>
+    </div>
+    <div class="col">
+      <div class="col-label">after</div>
+      <div class="code-block">_SERIALISERS = {
+    <span class="st">"json"</span>:  _identity,
+    <span class="st">"html"</span>:  _generate_html_report,
+    <span class="st">"excel"</span>: _generate_excel_report,
+    <span class="st">"pdf"</span>:   _generate_pdf_report,
+}
+
+<span class="kw">return</span> _SERIALISERS[output_format](report_data)</div>
+    </div>
+  </div>
+  <div class="why-block">A dict maps each valid format to its callable. Zero branching logic. Adding a new format is one dict entry. <code>_identity</code> makes the JSON pass-through explicit without a special-case branch, and the validated format key guarantees no <code>KeyError</code> at runtime.</div>
+</div>
+
+</body>
+</html>
